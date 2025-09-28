@@ -7,25 +7,22 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-   protected function schedule(Schedule $schedule)
-{
-    $schedule->call(function () {
-        $subscriptions = \App\Models\Subscription::where('status', 'active')
-            ->whereNotNull('end_date')
-            ->where('end_date', '<', now())
-            ->get();
+    /**
+     * Define the application's command schedule.
+     */
+    protected function schedule(Schedule $schedule): void
+    {
+        // Run invoice generator daily at midnight
+        $schedule->command('invoices:generate')->daily();
+    }
 
-        foreach ($subscriptions as $sub) {
-            $sub->update(['status' => 'expired']);
-        }
-    })->everyMinute();  // 👈 change daily() to everyMinute()
-}
-
-    protected function commands()
+    /**
+     * Register the commands for the application.
+     */
+    protected function commands(): void
     {
         $this->load(__DIR__.'/Commands');
-        if (file_exists(base_path('routes/console.php'))) {
-            require base_path('routes/console.php');
-        }
+
+        require base_path('routes/console.php');
     }
 }

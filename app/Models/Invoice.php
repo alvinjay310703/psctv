@@ -6,14 +6,17 @@ use Illuminate\Support\Carbon;
 
 class Invoice extends Model
 {
-    protected $fillable = [
-        'subscription_id',
-        'invoice_no',
-        'description',
-        'amount_due',
-        'due_date',
-        'status',
-    ];
+   protected $fillable = [
+    'subscription_id',
+    'invoice_no',
+    'description',
+    'amount_due',
+    'due_date',
+    'status',
+    'billing_date',
+    'is_recurring',
+];
+
 
     protected $dates = [
         'due_date',
