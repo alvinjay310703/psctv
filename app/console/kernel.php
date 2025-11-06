@@ -14,6 +14,8 @@ class Kernel extends ConsoleKernel
     {
         // Run invoice generator daily at midnight
         $schedule->command('invoices:generate')->daily();
+        $schedule->command('invoices:mark-overdue')->dailyAt('01:00');
+
     }
 
     /**
@@ -23,6 +25,6 @@ class Kernel extends ConsoleKernel
     {
         $this->load(__DIR__.'/Commands');
 
-        require base_path('routes/console.php');
+        require base_path('routes/Console.php');
     }
 }

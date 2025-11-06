@@ -1,81 +1,102 @@
 <?php
 namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 class Invoice extends Model
 {
-   protected $fillable = [
+    protected $fillable = [
     'subscription_id',
+    'customer_id',    // NEW for manual bills
+    'customer_name',   // ✅ new for manual walk-in
     'invoice_no',
     'description',
     'amount_due',
+    'amount_paid',
     'due_date',
-    'status',
     'billing_date',
+    'status',
     'is_recurring',
+    'notes',
 ];
 
 
-    protected $dates = [
-        'due_date',
-    ];
-
-    /**
-     * Boot method to auto-generate invoice numbers
-     */
-   protected static function booted()
+    protected static function boot()
 {
+    parent::boot();
+
     static::creating(function ($invoice) {
-        // Auto-generate invoice number
         if (empty($invoice->invoice_no)) {
-            $lastInvoice = self::latest('id')->first();
-            $nextNumber  = $lastInvoice ? $lastInvoice->id + 1 : 1;
-            $invoice->invoice_no = 'INV-' . date('Ymd') . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
-        }
-
-        // Default description if not provided
-        if (empty($invoice->description)) {
-            $invoice->description = 'Billing Charge';
-        }
-
-        // Default status if not provided
-        if (empty($invoice->status)) {
-            $invoice->status = 'unpaid';
+            $invoice->invoice_no = 'INV-' . str_pad((Invoice::max('id') + 1), 6, '0', STR_PAD_LEFT);
         }
     });
 }
-    
 
+    protected $casts = [
+        'due_date'     => 'date',
+        'billing_date' => 'date',
+        'is_recurring' => 'boolean',
+    ];
 
-    /**
-     * Auto-update status whenever accessed
-     */
-    public function getStatusAttribute($value)
-    {
-        // Keep status if already paid
-        if ($value === 'paid') {
-            return $value;
-        }
+   // --- Relationships ---
+public function subscription()
+{
+    return $this->belongsTo(Subscription::class);
+}
 
-        // If overdue
-        if ($this->due_date && Carbon::parse($this->due_date)->isPast() && $value === 'unpaid') {
-            $this->updateQuietly(['status' => 'overdue']);
-            return 'overdue';
-        }
+public function customer()
+{
+    return $this->belongsTo(Customer::class);
+}
 
+public function payments()
+{
+    return $this->hasMany(Payment::class);
+}
+
+// --- Helpers ---
+public function balanceRemaining(): float
+{
+    return max(0, $this->amount_due - $this->amount_paid);
+}
+
+public function isOverdue(): bool
+{
+    return $this->status !== 'paid' && $this->due_date?->isPast();
+}
+
+public function markOverdue()
+{
+    if ($this->isOverdue()) {
+        $this->updateQuietly(['status' => 'overdue']);
+    }
+}
+
+/**
+ * Accessor for status
+ * - Prevents recursion by not updating DB here.
+ */
+public function getStatusAttribute($value)
+{
+    // Always trust stored statuses for paid/cancelled
+    if (in_array($value, ['paid', 'cancelled'])) {
         return $value;
     }
 
-    // Relationships
-    public function subscription()
-    {
-        return $this->belongsTo(Subscription::class);
+    // Mark as overdue when due date is past and still unpaid
+    if ($this->due_date && now()->gt($this->due_date) && $value === 'unpaid') {
+        // 🛠 Use getRawOriginal() to read the actual DB column directly
+        if ($this->getRawOriginal('status') !== 'overdue') {
+            $this->updateQuietly(['status' => 'overdue']);
+        }
+        return 'overdue';
     }
 
-    public function payments()
-    {
-        return $this->hasMany(Payment::class);
-    }
+    return $value;
 }
+
+
+
+
+}
+

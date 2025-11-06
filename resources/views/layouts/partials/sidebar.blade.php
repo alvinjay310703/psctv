@@ -1,22 +1,20 @@
-<aside id="sidebar"  
-    class="sidebar-expanded bg-gray-800 text-white h-screen p-5 fixed top-0 left-0 transition-all duration-300 overflow-hidden">
+<aside id="sidebar"
+    class="sidebar-expanded bg-gray-900 text-gray-200 h-screen w-64 p-5 fixed top-0 left-0 transition-all duration-300 ease-in-out overflow-y-auto shadow-lg z-50">
 
-    <!-- Sidebar Logo -->
-    <div class="flex items-center justify-center mb-6 border-b border-gray-700 pb-1">
-        <img src="{{ asset('images/logo3.png') }}" alt="PCTVS Logo" class="h-14 w-auto pb-3">
+    <!-- Logo -->
+    <div class="flex items-center justify-center mb-6 border-b border-gray-700 pb-3">
+        <img src="{{ asset('images/logo3.png') }}" alt="PCTVS Logo" class="h-14 w-auto">
     </div>
-   
+
     <nav>
-        <ul class="space-y-1">
+        <ul class="space-y-2 text-sm">
 
             <!-- Dashboard -->
             <li>
                 <a href="/dashboard" data-label="Dashboard"
-                   class="flex items-center py-2 px-3 rounded transition 
-                   {{ request()->is('dashboard') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2 7-7 7 7-2 2v8a2 2 0 01-2 2H7a2 2 0 01-2-2v-8z"/>
-                    </svg>
+                   class="flex items-center py-2 px-3 rounded-md transition
+                   {{ request()->is('dashboard') ? 'bg-indigo-600 text-white font-semibold shadow' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <x-heroicon-o-home class="h-5 w-5 mr-3"/>
                     <span class="sidebar-text">Dashboard</span>
                 </a>
             </li>
@@ -24,105 +22,124 @@
             <!-- Customers -->
             <li>
                 <button type="button" data-label="Customers"
-                    class="flex items-center justify-between w-full py-2 px-3 rounded submenu-toggle transition
-                    {{ request()->is('customers*') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700' }}" 
-                    data-target="customersMenu">
+                    class="flex items-center justify-between w-full py-2 px-3 rounded-md transition
+                    {{ request()->is('customers*') ? 'bg-indigo-600 text-white font-semibold shadow' : 'hover:bg-gray-700 hover:text-white' }}"
+                    onclick="toggleSubmenu('customersMenu')">
                     <span class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M5.5 20v-2a4.5 4.5 0 019 0v2M9 11a4 4 0 100-8 4 4 0 000 8zM17 11a4 4 0 110-8 4 4 0 010 8zM19.5 20v-2a4.5 4.5 0 00-4.5-4.5"/>
-                        </svg>
+                        <x-heroicon-o-users class="h-5 w-5 mr-3"/>
                         <span class="sidebar-text">Customers</span>
                     </span>
                     <span class="caret transform transition-transform duration-300 {{ request()->is('customers*') ? 'rotate-90' : '' }}">▸</span>
                 </button>
-                <ul id="customersMenu" class="space-y-1 mt-1 pl-3 {{ request()->is('customers*') ? '' : 'hidden' }}">
+                <ul id="customersMenu" class="space-y-1 mt-1 pl-8 overflow-hidden {{ request()->is('customers*') ? 'opacity-100 max-h-96' : 'hidden opacity-0 max-h-0' }}">
                     <li>
-                        <a href="/customers/list" class="flex items-center py-1 px-8 text-sm rounded transition
-                           {{ request()->is('customers/list') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700 hover:text-blue-300' }}">
-                            <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M9 2H5a2 2 0 00-2 2v16a2 2 0 002 2h14a2 2 0 002-2V8l-6-6H9z"/>
-                            </svg>
-                            Customer List
+                        <a href="{{ route('customers.create') }}" class="flex items-center py-1 px-3 rounded-md transition
+                           {{ request()->is('customers/create') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700 hover:text-white' }}">
+                            <x-heroicon-o-plus class="h-4 w-4 mr-2"/>
+                            <span class="sidebar-text">Add Customer</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/customers/pre-registered" class="flex items-center py-1 px-8 text-sm rounded transition
-                           {{ request()->is('customers/pre-registered') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700 hover:text-blue-300' }}">
-                            <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 6v6l4 2M12 22a10 10 0 100-20 10 10 0 000 20z"/>
-                            </svg>
-                            Pre-Registered
+                        <a href="/customers/list" class="flex items-center py-1 px-3 rounded-md transition
+                           {{ request()->is('customers/list') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700 hover:text-white' }}">
+                            <x-heroicon-o-queue-list class="h-4 w-4 mr-2"/>
+                            <span class="sidebar-text">Customer List</span>
                         </a>
                     </li>
+                   
                 </ul>
             </li>
 
             <!-- Subscriptions -->
             <li>
-                <a href="{{ route('subscriptions.index') }}" data-label="Subscriptions"
-                   class="flex items-center py-2 px-3 rounded transition
-                   {{ request()->is('subscriptions*') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M12 2l9 4.5-9 4.5-9-4.5L12 2zm0 9l9 4.5-9 4.5-9-4.5L12 11z"/>
-                    </svg>
-                    <span class="sidebar-text">Subscriptions</span>
-                </a>
+                <button type="button" data-label="Subscriptions"
+                    class="flex items-center justify-between w-full py-2 px-3 rounded-md transition
+                    {{ request()->is('subscriptions*') || request()->is('packages*')
+                        ? 'bg-indigo-600 text-white font-semibold shadow'
+                        : 'hover:bg-gray-700 hover:text-white' }}"
+                    onclick="toggleSubmenu('subscriptionsMenu')">
+                    <span class="flex items-center">
+                        <x-heroicon-o-squares-2x2 class="h-5 w-5 mr-3"/>
+                        <span class="sidebar-text">Subscriptions</span>
+                    </span>
+                    <span class="caret transform transition-transform duration-300
+                        {{ request()->is('subscriptions*') || request()->is('packages*') ? 'rotate-90' : '' }}">▸</span>
+                </button>
+                <ul id="subscriptionsMenu" class="space-y-1 mt-1 pl-8 overflow-hidden {{ request()->is('subscriptions*') || request()->is('packages*') ? 'opacity-100 max-h-96' : 'hidden opacity-0 max-h-0' }}">
+                    <li>
+                        <a href="{{ route('subscriptions.index') }}" class="flex items-center py-1 px-3 rounded-md transition
+                           {{ request()->is('subscriptions*') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700 hover:text-white' }}">
+                            <x-heroicon-o-cog-6-tooth class="h-4 w-4 mr-2"/>
+                            <span class="sidebar-text">Manage Subscriptions</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('packages.index') }}" class="flex items-center py-1 px-3 rounded-md transition
+                           {{ request()->is('packages*') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700 hover:text-white' }}">
+                            <x-heroicon-o-gift class="h-4 w-4 mr-2"/>
+                            <span class="sidebar-text">Packages</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
 
             <!-- Service Requests -->
             <li>
                 <a href="{{ route('service_requests.index') }}" data-label="Service Requests"
-                   class="flex items-center py-2 px-3 rounded transition
-                   {{ request()->is('service-requests*') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 5h6M9 9h6M9 13h6M9 17h6M5 7h.01M5 11h.01M5 15h.01M5 19h.01" />
-                    </svg>
+                   class="flex items-center py-2 px-3 rounded-md transition
+                   {{ request()->is('service_requests*') ? 'bg-indigo-600 text-white font-semibold shadow' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <x-heroicon-o-wrench-screwdriver class="h-5 w-5 mr-3"/>
                     <span class="sidebar-text">Service Requests</span>
                 </a>
             </li>
 
             <!-- Technicians -->
             <li>
-                <a href="/technicians/list" class="flex items-center py-2 px-3 rounded transition
-                   {{ request()->is('technicians*') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
+                <a href="{{ route('technicians.index') }}" class="flex items-center py-2 px-3 rounded-md transition
+                   {{ request()->is('technicians*') ? 'bg-indigo-600 text-white font-semibold shadow' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <x-heroicon-o-user-group class="h-5 w-5 mr-3"/>
                     <span class="sidebar-text">Technicians</span>
                 </a>
             </li>
 
             <!-- Billing -->
             <li>
-                <a href="{{ route('billing.index') }}" 
-                   class="flex items-center py-2 px-3 rounded transition
-                   {{ request()->is('billing*') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 14h6M9 10h6M5 21l2-2 2 2 2-2 2 2 2-2 2 2 2-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16z"/>
-                    </svg>
-                    <span class="sidebar-text">Billing</span>
-                </a>
+                <button type="button" data-label="Billing"
+                    class="flex items-center justify-between w-full py-2 px-3 rounded-md transition
+                    {{ request()->is('billing*') ? 'bg-indigo-600 text-white font-semibold shadow' : 'hover:bg-gray-700 hover:text-white' }}"
+                    onclick="toggleSubmenu('billingMenu')">
+                    <span class="flex items-center">
+                        <x-heroicon-o-credit-card class="h-5 w-5 mr-3"/>
+                        <span class="sidebar-text">Billing</span>
+                    </span>
+                    <span class="caret transform transition-transform duration-300 {{ request()->is('billing*') ? 'rotate-90' : '' }}">▸</span>
+                </button>
+                <ul id="billingMenu" class="space-y-1 mt-1 pl-8 overflow-hidden {{ request()->is('billing*') ? 'opacity-100 max-h-96' : 'hidden opacity-0 max-h-0' }}">
+                    <li>
+                        <a href="{{ route('billing.index') }}" class="flex items-center py-1 px-3 rounded-md transition
+                           {{ request()->is('billing/index') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700 hover:text-white' }}">
+                            <x-heroicon-o-chart-bar class="h-4 w-4 mr-2"/>
+                            <span class="sidebar-text">Billing Overview</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('invoice.logs') }}" class="flex items-center py-1 px-3 rounded-md transition
+                           {{ request()->is('billing/logs') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700 hover:text-white' }}">
+                            <x-heroicon-o-document-text class="h-4 w-4 mr-2"/>
+                            <span class="sidebar-text">Invoice Logs</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
 
             <!-- Announcements -->
             <li>
                 <a href="{{ route('announcements.index') }}" data-label="Announcements"
-                   class="flex items-center py-2 px-3 rounded-lg transition 
-                          {{ request()->is('announcements*') 
-                              ? 'bg-indigo-600 text-white font-medium shadow' 
-                              : 'text-gray-300 hover:bg-gray-700 hover:text-white' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" 
-                         class="h-5 w-5 mr-3 flex-shrink-0" 
-                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M11 5L6 8H4a2 2 0 00-2 2v4a2 2 0 002 2h2l5 3V5zM15 9a5 5 0 010 6" />
-                    </svg>
+                   class="flex items-center py-2 px-3 rounded-md transition
+                          {{ request()->is('announcements*')
+                              ? 'bg-indigo-600 text-white font-semibold shadow'
+                              : 'hover:bg-gray-700 hover:text-white' }}">
+                    <x-heroicon-o-speaker-wave class="h-5 w-5 mr-3"/>
                     <span class="sidebar-text">Announcements</span>
                 </a>
             </li>
@@ -130,12 +147,9 @@
             <!-- Reports -->
             <li>
                 <a href="{{ route('reports.index') }}" data-label="Reports"
-                   class="flex items-center py-2 px-3 rounded transition 
-                   {{ request()->is('reports') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-                    </svg>
+                   class="flex items-center py-2 px-3 rounded-md transition
+                   {{ request()->is('reports*') ? 'bg-indigo-600 text-white font-semibold shadow' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <x-heroicon-o-chart-bar-square class="h-5 w-5 mr-3"/>
                     <span class="sidebar-text">Reports</span>
                 </a>
             </li>
@@ -143,11 +157,9 @@
             <!-- Users -->
             <li>
                 <a href="{{ route('users.index') }}" data-label="Users"
-                   class="flex items-center py-2 px-3 rounded transition {{ request()->is('users*') ? 'bg-gray-700 text-blue-300 font-semibold' : 'hover:bg-gray-700' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/>
-                    </svg>
+                   class="flex items-center py-2 px-3 rounded-md transition
+                   {{ request()->is('users*') ? 'bg-indigo-600 text-white font-semibold shadow' : 'hover:bg-gray-700 hover:text-white' }}">
+                    <x-heroicon-o-shield-check class="h-5 w-5 mr-3"/>
                     <span class="sidebar-text">Users</span>
                 </a>
             </li>

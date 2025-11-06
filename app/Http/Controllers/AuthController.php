@@ -25,21 +25,25 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
+            $request->session()->regenerate();
 
-            // 🔹 Redirect based on role
+            // 🔹 Redirect based on role with proper intended URL handling
             if ($user->role === 'admin') {
                 return redirect()->intended('/dashboard');
             } elseif ($user->role === 'staff') {
                 return redirect()->intended('/staff/dashboard');
+            } elseif ($user->role === 'technician') {
+                return redirect()->intended('/technician/dashboard');
             }
 
-            return redirect('/'); // fallback
+            // Fallback for customers or other roles
+            return redirect('/');
         }
 
         // Return error if login fails
-    return back()->withErrors([
-        'login' => 'The email or password you entered is incorrect.',
-    ])->withInput();
+        return back()->withErrors([
+            'login' => 'The email or password you entered is incorrect.',
+        ])->withInput();
     }
 
     // ✅ Handle logout
@@ -51,9 +55,4 @@ class AuthController extends Controller
 
         return redirect('/login');
     }
-    
-    
-
-
-
 }

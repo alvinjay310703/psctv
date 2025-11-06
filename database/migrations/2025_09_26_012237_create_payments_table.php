@@ -11,18 +11,41 @@ return new class extends Migration
      */
     public function up(): void
     {
-      Schema::create('payments', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('invoice_id')->constrained('invoices')->onDelete('cascade');
-    $table->decimal('amount', 12, 2);
-    $table->enum('method', ['cash','gcash','paymaya','bank_transfer','card','other'])->default('other');
-    $table->string('reference_no')->nullable();
-    $table->enum('status', ['pending','confirmed','failed','reversed'])->default('pending');
-    $table->timestamp('paid_at')->nullable();
-    $table->json('payload')->nullable();
-    $table->timestamps();
-});
+        Schema::create('payments', function (Blueprint $table) {
+            $table->id();
 
+            // Relationships
+            $table->foreignId('invoice_id')
+                  ->constrained('invoices')
+                  ->onDelete('cascade');
+
+            // Payment details
+            $table->decimal('amount_paid', 12, 2)->default(0);
+            $table->string('method')->nullable();
+            $table->string('transaction_id')->nullable();
+            $table->string('reference', 100)->nullable();
+
+            // Payment status
+            $table->enum('status', [
+                'pending',
+                'completed',
+                'paid',
+                'failed',
+                'cancelled'
+            ])->default('pending');
+
+            // Optional metadata
+            $table->timestamp('payment_date')->nullable();
+            $table->json('payload')->nullable();
+
+            // Track creator
+            $table->foreignId('created_by')
+                  ->nullable()
+                  ->constrained('users')
+                  ->onDelete('set null');
+
+            $table->timestamps();
+        });
     }
 
     /**

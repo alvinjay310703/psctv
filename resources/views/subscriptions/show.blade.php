@@ -17,33 +17,34 @@
         </a>
     </div>
 
-    <!-- Customer Info -->
+    <!-- Customer & Package Info -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Customer Info -->
         <div class="bg-gray-50 p-5 rounded-lg border space-y-2">
             <h3 class="font-semibold text-gray-700 text-lg">👤 Customer Information</h3>
-            <p><span class="font-medium">Name:</span> {{ $subscription->customer }}</p>
-            <p><span class="font-medium">Email:</span> {{ $subscription->email }}</p>
-            <p><span class="font-medium">Phone:</span> {{ $subscription->phone }}</p>
-            <p><span class="font-medium">Address:</span> {{ $subscription->address }}</p>
+            <p><span class="font-medium">Name:</span> {{ $subscription->customer->user->name }}</p>
+            <p><span class="font-medium">Email:</span> {{ $subscription->customer->user->email }}</p>
+            <p><span class="font-medium">Phone:</span> {{ $subscription->customer->phone }}</p>
+            <p><span class="font-medium">Address:</span> {{ $subscription->customer->address }}</p>
         </div>
 
-        <!-- Subscription Info -->
+        <!-- Package Info -->
         <div class="bg-gray-50 p-5 rounded-lg border space-y-2">
-            <h3 class="font-semibold text-gray-700 text-lg">📦 Subscription Info</h3>
-            <p><span class="font-medium">Plan:</span> {{ $subscription->plan }}</p>
-            <p><span class="font-medium">Cycle:</span> {{ ucfirst($subscription->cycle) }}</p>
-            <p><span class="font-medium">Start:</span> {{ $subscription->start_date->format('M d, Y') }}</p>
-            <p><span class="font-medium">End:</span> {{ $subscription->end_date->format('M d, Y') }}</p>
-            <p>
-                <span class="font-medium">Status:</span>
+            <h3 class="font-semibold text-gray-700 text-lg">📦 Package Details</h3>
+            <p><span class="font-medium">Plan:</span> {{ $subscription->package->name }}</p>
+            <p><span class="font-medium">Price:</span> ₱{{ number_format($subscription->package->price, 2) }}</p>
+            <p><span class="font-medium">Cycle:</span> {{ ucfirst($subscription->package->billing_cycle) }}</p>
+            <p><span class="font-medium">Status:</span>
                 <span class="px-2 py-1 rounded-full text-xs font-semibold
                     @if($subscription->status === 'active') bg-green-100 text-green-700
                     @elseif($subscription->status === 'expired') bg-red-100 text-red-600
                     @elseif($subscription->status === 'cancelled') bg-gray-200 text-gray-600
-                    @endif">
+                    @else bg-yellow-100 text-yellow-600 @endif">
                     {{ ucfirst($subscription->status) }}
                 </span>
             </p>
+            <p><span class="font-medium">Start Date:</span> {{ $subscription->start_date->format('M d, Y') }}</p>
+            <p><span class="font-medium">End Date:</span> {{ optional($subscription->end_date)->format('M d, Y') ?? '—' }}</p>
         </div>
     </div>
 
@@ -55,25 +56,32 @@
                 <tr class="bg-gray-100 text-gray-600 text-xs uppercase">
                     <th class="p-2">Invoice #</th>
                     <th class="p-2">Amount</th>
+                    <th class="p-2">Due Date</th>
                     <th class="p-2">Status</th>
-                    <th class="p-2">Date</th>
+                    <th class="p-2">Created</th>
                 </tr>
             </thead>
             <tbody class="divide-y">
-                @foreach($subscription->invoices as $inv)
+                @forelse($subscription->invoices as $inv)
                 <tr>
-                    <td class="p-2">INV-{{ $inv->id }}</td>
-                    <td class="p-2">₱{{ number_format($inv->amount, 2) }}</td>
+                    <td class="p-2">{{ $inv->invoice_no }}</td>
+                    <td class="p-2">₱{{ number_format($inv->amount_due, 2) }}</td>
+                    <td class="p-2">{{ $inv->due_date?->format('M d, Y') ?? '—' }}</td>
                     <td class="p-2">
                         <span class="px-2 py-1 rounded-full text-xs font-semibold
                             @if($inv->status === 'paid') bg-green-100 text-green-700
-                            @else bg-red-100 text-red-600 @endif">
+                            @elseif($inv->status === 'overdue') bg-red-100 text-red-600
+                            @else bg-yellow-100 text-yellow-700 @endif">
                             {{ ucfirst($inv->status) }}
                         </span>
                     </td>
                     <td class="p-2">{{ $inv->created_at->format('M d, Y') }}</td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-gray-500">No invoices found.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
