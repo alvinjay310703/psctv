@@ -6,15 +6,14 @@ return [
     |--------------------------------------------------------------------------
     | Paths
     |--------------------------------------------------------------------------
-    | Apply CORS to these routes only. Usually API routes and Sanctum cookies.
+    | Apply CORS to these routes only. Include mobile endpoints.
     */
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'mobile/*'],
 
     /*
     |--------------------------------------------------------------------------
     | Allowed Methods
     |--------------------------------------------------------------------------
-    | Allow all standard HTTP methods.
     */
     'allowed_methods' => ['*'],
 
@@ -27,18 +26,19 @@ return [
     */
     'allowed_origins' => [
         // Development
-        'http://localhost:19006',     // Expo Web
-        'http://127.0.0.1:19006',     // Expo Web (alternate)
-        'http://localhost:8081',      // React Native Web (Expo dev server)
-        'http://127.0.0.1:8081',      // Alternate React Native Web
-        'http://localhost:5173',      // Vite/React Web dev
-        'http://10.0.2.2:19006',      // Android emulator
-        'http://10.0.22.243:19006',   // LAN IP dev testing
-        'exp://127.0.0.1:*',          // Expo Go dev tunnel
+        'http://localhost:19006',     
+        'http://127.0.0.1:19006',     
+        'http://localhost:8081',      
+        'http://127.0.0.1:8081',      
+        'http://localhost:5173',      
+        'http://10.0.2.2:19006',      
+        'http://10.0.22.243:19006',   
+        'exp://127.0.0.1:*',          
 
         // Production
         'https://psctv.tech',
         'https://www.psctv.tech',
+        'https://your-render-app.onrender.com', // Add your Render URL here
     ],
 
     /*
@@ -53,7 +53,6 @@ return [
     |--------------------------------------------------------------------------
     | Allowed Headers
     |--------------------------------------------------------------------------
-    | Allow all headers for now (you can restrict later)
     */
     'allowed_headers' => ['*'],
 
@@ -68,7 +67,6 @@ return [
     |--------------------------------------------------------------------------
     | Max Age
     |--------------------------------------------------------------------------
-    | How long preflight results can be cached
     */
     'max_age' => 3600,
 
